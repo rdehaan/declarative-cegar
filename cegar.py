@@ -217,8 +217,8 @@ class GCCApp(Application):
     version: str
 
     def __init__(self):
-        self.program_name = "guess-and-check-with-glue"
-        self.version = "1.0"
+        self.program_name = "declarative-cegar"
+        self.version = "0.1"
 
     def main(self, control: Control, files: Sequence[str]):
         """

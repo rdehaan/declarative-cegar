@@ -55,52 +55,63 @@ swap(C1,C2,C3,C3) :-
 % use_axiom(neutrality2).
 % use_axiom(pos_responsiveness).
 
-axiom(pareto(C)) :- candidate(C).
+axiom(pareto(C)) :- candidate(C),
+    use_axiom(pareto).
 pos_axiom_instance(single(Prof),pareto(C)) :-
     use_axiom(pareto),
     profile_num(Prof), axiom(pareto(C)).
 
-axiom(faithfulness).
+axiom(faithfulness) :-
+    use_axiom(faithfulness).
 pos_axiom_instance(single(Prof),faithfulness) :-
     use_axiom(faithfulness),
     profile_num(Prof), axiom(faithfulness).
 
-axiom(unanimity).
+axiom(unanimity) :-
+    use_axiom(unanimity).
 pos_axiom_instance(single(Prof),unanimity) :-
     use_axiom(unanimity),
     profile_num(Prof), axiom(unanimity).
 
-axiom(cancellation).
+axiom(cancellation) :-
+    use_axiom(cancellation).
 pos_axiom_instance(single(Prof),cancellation) :-
     use_axiom(cancellation),
     profile_num(Prof), axiom(cancellation).
 
-axiom(reinforcement).
+axiom(reinforcement) :-
+    use_axiom(reinforcement).
 reinforcement_triple(Prof1,Prof2,Prof3) :-
+    use_axiom(reinforcement),
     profile_num(Prof1), profile_num(Prof2), Prof1 <= Prof2,
     profile_num(Prof3),
     Prof1 < Prof3, Prof2 < Prof3. % only allowed due to symmetry breaking
 reinforcement_triple(Prof1,Prof2,1) :-
+    use_axiom(reinforcement),
     profile_num(Prof1), profile_num(Prof2), Prof1 <= Prof2.
 pos_axiom_instance(triple(Prof1,Prof2,Prof3),reinforcement) :-
     use_axiom(reinforcement),
     reinforcement_triple(Prof1,Prof2,Prof3),
     axiom(reinforcement).
 
-axiom(condorcet(C)) :- candidate(C).
+axiom(condorcet(C)) :- candidate(C),
+    use_axiom(condorcet).
 pos_axiom_instance(single(Prof),condorcet(C)) :-
     use_axiom(condorcet),
     profile_num(Prof), axiom(condorcet(C)).
 
-axiom(neutrality2(C1,C2)) :- candidate(C1), candidate(C2), C1 < C2.
+axiom(neutrality2(C1,C2)) :- candidate(C1), candidate(C2), C1 < C2,
+    use_axiom(neutrality2).
 pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)) :-
     use_axiom(neutrality2),
     profile_num(Prof1), profile_num(Prof2), Prof1 <= Prof2,
     axiom(neutrality2(C1,C2)).
 
 pos_response_pair(C,P) :-
+    use_axiom(pos_responsiveness),
     candidate(C), position(P), P < num_candidates.
 axiom(pos_responsiveness(V,C,P)) :-
+    use_axiom(pos_responsiveness),
     voter(V), pos_response_pair(C,P).
 pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
     use_axiom(pos_responsiveness),

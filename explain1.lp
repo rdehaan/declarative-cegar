@@ -2,13 +2,10 @@
 % https://staff.fnwi.uva.nl/u.endriss/pubs/files/NardiEtAlAAMAS2022.pdf
 
 %* *** TODO's ***
-- neutrality/3
-- positive reinforcement
-- lex tie breaking in same-size profiles
+- finish comments
 - proper refinement
-- 'Borda' constraints on choices
-- idem, plurality
-- idem, other rules
+- 'Borda' constraints on choices, also for plurality, etc.
+- neutrality/3
 *************** *%
 
 %* *******************
@@ -259,24 +256,24 @@ pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 % target_outcome(1).
 % target_outcome(2).
 
-use_axiom(faithfulness).
-use_axiom(cancellation).
-use_axiom(reinforcement).
-use_axiom(pareto).
-#const num_candidates=3.
-#const num_voters=3.
-#const num_profiles=5.
-#const num_axiom_instances=3.
-target_profile(1,1,1).
-target_profile(1,2,2).
-target_profile(1,3,3).
-target_profile(2,1,1).
-target_profile(2,2,2).
-target_profile(2,3,3).
-target_profile(3,3,1).
-target_profile(3,2,2).
-target_profile(3,1,3).
-target_outcome(1).
+% use_axiom(faithfulness).
+% use_axiom(cancellation).
+% use_axiom(reinforcement).
+% use_axiom(pareto).
+% #const num_candidates=3.
+% #const num_voters=3.
+% #const num_profiles=6.
+% #const num_axiom_instances=3.
+% target_profile(1,1,1).
+% target_profile(1,2,2).
+% target_profile(1,3,3).
+% target_profile(2,1,1).
+% target_profile(2,2,2).
+% target_profile(2,3,3).
+% target_profile(3,3,1).
+% target_profile(3,2,2).
+% target_profile(3,1,3).
+% target_outcome(1).
 
 % use_axiom(pareto).
 % use_axiom(neutrality2).
@@ -296,24 +293,24 @@ target_outcome(1).
 % target_profile(3,3,3).
 % target_outcome(1).
 
-% use_axiom(faithfulness).
-% use_axiom(pareto).
-% use_axiom(neutrality2).
-% use_axiom(reinforcement).
-% #const num_candidates=3.
-% #const num_voters=3.
-% #const num_profiles=3.
-% #const num_axiom_instances=4.
-% target_profile(1,1,1).
-% target_profile(1,2,2).
-% target_profile(1,3,3).
-% target_profile(2,1,1).
-% target_profile(2,3,2).
-% target_profile(2,2,3).
-% target_profile(3,2,1).
-% target_profile(3,1,2).
-% target_profile(3,3,3).
-% target_outcome(1).
+use_axiom(faithfulness).
+use_axiom(pareto).
+use_axiom(neutrality2).
+use_axiom(reinforcement).
+#const num_candidates=3.
+#const num_voters=3.
+#const num_profiles=3.
+#const num_axiom_instances=4.
+target_profile(1,1,1).
+target_profile(1,2,2).
+target_profile(1,3,3).
+target_profile(2,1,1).
+target_profile(2,3,2).
+target_profile(2,2,3).
+target_profile(3,2,1).
+target_profile(3,1,2).
+target_profile(3,3,3).
+target_outcome(1).
 
 % use_axiom(cancellation).
 % use_axiom(pos_responsiveness).
@@ -617,7 +614,30 @@ profile_connected(Prof1) :-
 
 %%% Symmetry breaking: ensure that same-size profiles (except no 1)
 %%% are lexicographically sorted
-% TODO
+interprof_vote_lex_eq_until(Prof1,Prof2,V,0) :-
+    profile_num(Prof1), profile_num(Prof2), Prof1 < Prof2, voter(V).
+interprof_vote_lex_eq_until(Prof1,Prof2,V,Pos) :-
+    profile_num(Prof1), profile_num(Prof2), Prof1 < Prof2, voter(V),
+    position(Pos), interprof_vote_lex_eq_until(Prof1,Prof2,V,Pos-1),
+    profile(Prof1,V,C,Pos), profile(Prof2,V,C,Pos).
+interprof_vote_lex_dom(Prof1,Prof2,V) :-
+    profile_num(Prof1), profile_num(Prof2), Prof1 < Prof2, voter(V),
+    profile(Prof1,V,C1,Pos), profile(Prof2,V,C2,Pos), C2 < C1,
+    interprof_vote_lex_eq_until(Prof1,Prof2,V,Pos-1).
+interprof_lex_eq_until(Prof1,Prof2,0) :-
+    profile_num(Prof1), profile_num(Prof2), Prof1 < Prof2.
+interprof_lex_eq_until(Prof1,Prof2,V) :-
+    profile_num(Prof1), profile_num(Prof2), Prof1 < Prof2, voter(V),
+    interprof_lex_eq_until(Prof1,Prof2,V-1),
+    votes_identical(Prof1,V,Prof2,V).
+interprof_lex_dom(Prof1,Prof2) :-
+    profile_num(Prof1), profile_num(Prof2), Prof1 < Prof2, voter(V),
+    interprof_lex_eq_until(Prof1,Prof2,V-1),
+    interprof_vote_lex_dom(Prof1,Prof2,V).
+:- profile_num(Prof1), profile_num(Prof2), Prof1 < Prof2,
+    num_active_voters(Prof1,N), num_active_voters(Prof2,N),
+    interprof_lex_dom(Prof2,Prof1).
+
 
 #show profile/4.
 #show use_axiom_instance/2.

@@ -206,6 +206,7 @@ class CheckPropagator(Propagator):
                 if lit in mask:
                     conflict.append(-lit if assignment.is_true(lit) else lit)
 
+            # print('.', end='')
             control.add_clause(conflict)
 
 
@@ -244,7 +245,8 @@ class GCCApp(Application):
         glue = []
         def on_model(model):
             for atom in model.symbols(shown=True):
-                glue.append(str(atom))
+                if atom.name == "glue":
+                    glue.append(str(atom.arguments[0]))
         glue_control.solve(on_model=on_model)
 
         control.register_propagator(CheckPropagator(check, glue))

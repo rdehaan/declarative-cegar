@@ -256,24 +256,24 @@ pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 % target_outcome(1).
 % target_outcome(2).
 
-% use_axiom(faithfulness).
-% use_axiom(cancellation).
-% use_axiom(reinforcement).
-% use_axiom(pareto).
-% #const num_candidates=3.
-% #const num_voters=3.
-% #const num_profiles=6.
-% #const num_axiom_instances=3.
-% target_profile(1,1,1).
-% target_profile(1,2,2).
-% target_profile(1,3,3).
-% target_profile(2,1,1).
-% target_profile(2,2,2).
-% target_profile(2,3,3).
-% target_profile(3,3,1).
-% target_profile(3,2,2).
-% target_profile(3,1,3).
-% target_outcome(1).
+use_axiom(faithfulness).
+use_axiom(cancellation).
+use_axiom(reinforcement).
+use_axiom(pareto).
+#const num_candidates=3.
+#const num_voters=3.
+#const num_profiles=5.
+#const num_axiom_instances=3.
+target_profile(1,1,1).
+target_profile(1,2,2).
+target_profile(1,3,3).
+target_profile(2,1,1).
+target_profile(2,2,2).
+target_profile(2,3,3).
+target_profile(3,3,1).
+target_profile(3,2,2).
+target_profile(3,1,3).
+target_outcome(1).
 
 % use_axiom(pareto).
 % use_axiom(neutrality2).
@@ -293,24 +293,24 @@ pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 % target_profile(3,3,3).
 % target_outcome(1).
 
-use_axiom(faithfulness).
-use_axiom(pareto).
-use_axiom(neutrality2).
-use_axiom(reinforcement).
-#const num_candidates=3.
-#const num_voters=3.
-#const num_profiles=3.
-#const num_axiom_instances=4.
-target_profile(1,1,1).
-target_profile(1,2,2).
-target_profile(1,3,3).
-target_profile(2,1,1).
-target_profile(2,3,2).
-target_profile(2,2,3).
-target_profile(3,2,1).
-target_profile(3,1,2).
-target_profile(3,3,3).
-target_outcome(1).
+% use_axiom(faithfulness).
+% use_axiom(pareto).
+% use_axiom(neutrality2).
+% use_axiom(reinforcement).
+% #const num_candidates=3.
+% #const num_voters=3.
+% #const num_profiles=3.
+% #const num_axiom_instances=4.
+% target_profile(1,1,1).
+% target_profile(1,2,2).
+% target_profile(1,3,3).
+% target_profile(2,1,1).
+% target_profile(2,3,2).
+% target_profile(2,2,3).
+% target_profile(3,2,1).
+% target_profile(3,1,2).
+% target_profile(3,3,3).
+% target_outcome(1).
 
 % use_axiom(cancellation).
 % use_axiom(pos_responsiveness).
@@ -651,12 +651,13 @@ Specifies the atoms on which the guess and check programs interact.
 #program glue.
 
 % Profiles
-profile(Prof,V,Cand,Pos) :-
+glue(profile(Prof,V,Cand,Pos)) :-
     profile_num(Prof), voter(V), candidate(Cand), position(Pos).
 
 % Axiom instances used
-use_axiom_instance(Profiles,Axiom) :- pos_axiom_instance(Profiles,Axiom).
+glue(use_axiom_instance(Profiles,Axiom)) :- pos_axiom_instance(Profiles,Axiom).
 
+% glue(axiom_applicable(Profiles,Axiom) :- pos_axiom_instance(Profiles,Axiom).
 
 %* ******************
 *** CHECK PROGRAM ***
@@ -676,65 +677,109 @@ target_outcome_differs :-
     not outcome(1,C), target_outcome(C), candidate(C).
 :- not target_outcome_differs.
 
+%%% Heuristic: satisfy as many axioms as possible
+#heuristic falsified(pos_axiom_instance(Profiles,Axiom)) :
+    pos_axiom_instance(Profiles,Axiom). [10,false]
+
 %%% Make sure that the outcomes satisfy all used axiom instances
+:- use_axiom_instance(Profiles,Axiom),
+    falsified(pos_axiom_instance(Profiles,Axiom)).
 %%% PARETO
-:- use_axiom_instance(single(Prof),pareto(C)),
+falsified(pos_axiom_instance(single(Prof),pareto(C))) :-
+    pos_axiom_instance(single(Prof),pareto(C)),
     outcome(Prof,C).
 %%% FAITHFULNESS
-:- use_axiom_instance(single(Prof),faithfulness),
+falsified(pos_axiom_instance(single(Prof),faithfulness)) :-
+    pos_axiom_instance(single(Prof),faithfulness),
     profile(Prof,1,C,1), not outcome(Prof,C).
-:- use_axiom_instance(single(Prof),faithfulness),
+falsified(pos_axiom_instance(single(Prof),faithfulness)) :-
+    pos_axiom_instance(single(Prof),faithfulness),
     profile(Prof,1,C1,1),
     outcome(Prof,C2), candidate(C2), C1 != C2.
 %%% UNANIMITY
-:- use_axiom_instance(single(Prof),unanimity),
+falsified(pos_axiom_instance(single(Prof),unanimity)) :-
+    pos_axiom_instance(single(Prof),unanimity),
     profile(Prof,1,C,1), not outcome(Prof,C).
-:- use_axiom_instance(single(Prof),unanimity),
+falsified(pos_axiom_instance(single(Prof),unanimity)) :-
+    pos_axiom_instance(single(Prof),unanimity),
     profile(Prof,1,C1,1),
     outcome(Prof,C2), candidate(C2), C1 != C2.
 %%% CANCELLATION
-:- use_axiom_instance(single(Prof),cancellation),
+falsified(pos_axiom_instance(single(Prof),cancellation)) :-
+    pos_axiom_instance(single(Prof),cancellation),
     not outcome(Prof,C), candidate(C).
 %%% REINFORCEMENT
 outcomes_intersect(Prof1,Prof2) :-
     profile_num(Prof1), profile_num(Prof2), Prof1 <= Prof2,
     outcome(Prof1,C), outcome(Prof2,C), candidate(C).
-:- use_axiom_instance(triple(Prof1,Prof2,Prof3),reinforcement),
+falsified(pos_axiom_instance(triple(Prof1,Prof2,Prof3),reinforcement)) :-
+    pos_axiom_instance(triple(Prof1,Prof2,Prof3),reinforcement),
     outcomes_intersect(Prof1,Prof2),
     outcome(Prof3,C), not outcome(Prof1,C).
-:- use_axiom_instance(triple(Prof1,Prof2,Prof3),reinforcement),
+falsified(pos_axiom_instance(triple(Prof1,Prof2,Prof3),reinforcement)) :-
+    pos_axiom_instance(triple(Prof1,Prof2,Prof3),reinforcement),
     outcomes_intersect(Prof1,Prof2),
     outcome(Prof3,C), not outcome(Prof2,C).
-:- use_axiom_instance(triple(Prof1,Prof2,Prof3),reinforcement),
+falsified(pos_axiom_instance(triple(Prof1,Prof2,Prof3),reinforcement)) :-
+    pos_axiom_instance(triple(Prof1,Prof2,Prof3),reinforcement),
     outcomes_intersect(Prof1,Prof2),
     outcome(Prof1,C), outcome(Prof2,C), not outcome(Prof3,C).
 %%% CONDORCET
-:- use_axiom_instance(single(Prof),condorcet(C)),
+falsified(pos_axiom_instance(single(Prof),condorcet(C))) :-
+    pos_axiom_instance(single(Prof),condorcet(C)),
     not outcome(Prof,C).
-:- use_axiom_instance(single(Prof),condorcet(C1)),
+falsified(pos_axiom_instance(single(Prof),condorcet(C1))) :-
+    pos_axiom_instance(single(Prof),condorcet(C1)),
     outcome(Prof,C2), candidate(C2), C1 != C2.
 %%% NEUTRALITY/2
-:- use_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)),
+falsified(pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2))) :-
+    pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)),
     swap(C1,C2,CS1,CS2), candidate(CS1),
     outcome(Prof1,CS1), not outcome(Prof2,CS2).
-:- use_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)),
+falsified(pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2))) :-
+    pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)),
     swap(C1,C2,CS1,CS2), candidate(CS1),
     outcome(Prof2,CS2), not outcome(Prof1,CS1).
 %%% POSITIVE RESPONSIVENESS
-:- use_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)),
+falsified(pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P))) :-
+    pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)),
     candidate(C),
     outcome(Prof1,C), not outcome(Prof2,C).
-:- use_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C1,P)),
+falsified(pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C1,P))) :-
+    pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C1,P)),
     candidate(C1), candidate(C2), C1 != C2,
     outcome(Prof1,C1), outcome(Prof2,C2).
 
 %%% Declare atoms to use for refinement
+% equiv_instance(Pr,Ax,Ax) :-
+%     pos_axiom_instance(Pr,Ax).
+% equiv_instance(Pr,pos_responsiveness(V1,C,P1),pos_responsiveness(V2,C,P2)) :-
+%     pos_axiom_instance(Pr,pos_responsiveness(V1,C,P1)),
+%     pos_axiom_instance(Pr,pos_responsiveness(V2,C,P2)).
+
+%%% REFINEMENT STRATEGY 1
 relevant(profile(Prof,V,Cand,Pos)) :-
     profile_num(Prof), voter(V), candidate(Cand), position(Pos).
 relevant(use_axiom_instance(Profiles,Axiom)) :-
-    not use_axiom_instance(Profiles,Axiom),
+    falsified(pos_axiom_instance(Profiles,Axiom)),
+    % axiom_applicable(Profiles,Axiom),
     pos_axiom_instance(Profiles,Axiom).
 
+% %%% REFINEMENT STRATEGY 2
+% relevant(profile(Prof,V,Cand,Pos)) :-
+%     profile_num(Prof), voter(V), candidate(Cand), position(Pos).
+% relevant(use_axiom_instance(Profiles,Axiom)) :-
+%     not falsified(pos_axiom_instance(Profiles,Axiom)),
+%     pos_axiom_instance(Profiles,Axiom).
+
+% %%% REFINEMENT STRATEGY 3
+% relevant(profile(Prof,V,Cand,Pos)) :-
+%     profile_num(Prof), voter(V), candidate(Cand), position(Pos).
+% relevant(use_axiom_instance(Profiles,Axiom)) :-
+%     not use_axiom_instance(Profiles,Axiom),
+%     pos_axiom_instance(Profiles,Axiom).
+
+% %%% REFINEMENT STRATEGY 4
 % relevant(profile(Prof,V,Cand,Pos)) :-
 %     profile_num(Prof), voter(V), candidate(Cand), position(Pos).
 % relevant(use_axiom_instance(Profiles,Axiom)) :-

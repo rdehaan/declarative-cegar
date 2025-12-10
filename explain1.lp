@@ -2,14 +2,13 @@
 % https://staff.fnwi.uva.nl/u.endriss/pubs/files/NardiEtAlAAMAS2022.pdf
 
 %* *** TODO's ***
-- neutrality/3 (two variants)
+- neutrality/3
 - positive reinforcement
 - lex tie breaking in same-size profiles
 - proper refinement
 - 'Borda' constraints on choices
 - idem, plurality
 - idem, other rules
-- add things like "use_axiom(neutrality)," to applicability rules (safely)
 *************** *%
 
 %* *******************
@@ -40,31 +39,36 @@ swap(C1,C2,C3,C3) :-
     candidate(C3), C3 != C1, C3 != C2.
 
 %%% Declare axioms
-#external use_axiom(pareto_dominated).
-#external use_axiom(faithfulness).
-#external use_axiom(cancellation).
-#external use_axiom(reinforcement).
-#external use_axiom(condorcet).
-#external use_axiom(neutrality).
-#external use_axiom(positive_responsiveness).
+% #external use_axiom(pareto).
+% #external use_axiom(faithfulness).
+% #external use_axiom(cancellation).
+% #external use_axiom(reinforcement).
+% #external use_axiom(condorcet).
+% #external use_axiom(neutrality2).
+% #external use_axiom(pos_responsiveness).
 
-% use_axiom(pareto_dominated).
+% use_axiom(pareto).
 % use_axiom(faithfulness).
 % use_axiom(cancellation).
 % use_axiom(reinforcement).
 % use_axiom(condorcet).
-% use_axiom(neutrality).
-% use_axiom(positive_responsiveness).
+% use_axiom(neutrality2).
+% use_axiom(pos_responsiveness).
 
-axiom(pareto_dominated(C)) :- candidate(C).
-pos_axiom_instance(single(Prof),pareto_dominated(C)) :-
-    use_axiom(pareto_dominated),
-    profile_num(Prof), axiom(pareto_dominated(C)).
+axiom(pareto(C)) :- candidate(C).
+pos_axiom_instance(single(Prof),pareto(C)) :-
+    use_axiom(pareto),
+    profile_num(Prof), axiom(pareto(C)).
 
 axiom(faithfulness).
 pos_axiom_instance(single(Prof),faithfulness) :-
     use_axiom(faithfulness),
     profile_num(Prof), axiom(faithfulness).
+
+axiom(unanimity).
+pos_axiom_instance(single(Prof),unanimity) :-
+    use_axiom(unanimity),
+    profile_num(Prof), axiom(unanimity).
 
 axiom(cancellation).
 pos_axiom_instance(single(Prof),cancellation) :-
@@ -90,12 +94,18 @@ pos_axiom_instance(single(Prof),condorcet(C)) :-
 
 axiom(neutrality2(C1,C2)) :- candidate(C1), candidate(C2), C1 < C2.
 pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)) :-
-    use_axiom(neutrality),
+    use_axiom(neutrality2),
     profile_num(Prof1), profile_num(Prof2), Prof1 <= Prof2,
     axiom(neutrality2(C1,C2)).
 
-% axiom(neutrality,2).
-% axiom(positive_responsiveness,2).
+pos_response_pair(C,P) :-
+    candidate(C), position(P), P < num_candidates.
+axiom(pos_responsiveness(V,C,P)) :-
+    voter(V), pos_response_pair(C,P).
+pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
+    use_axiom(pos_responsiveness),
+    profile_num(Prof1), profile_num(Prof2),
+    axiom(pos_responsiveness(V,C,P)).
 
 %* *******************************
 *** Target profile and outcome ***
@@ -103,7 +113,7 @@ pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)) :-
 *** in lexicographic order :-) ***
 ******************************* *%
 
-% use_axiom(pareto_dominated).
+% use_axiom(pareto).
 % #const num_candidates=3.
 % #const num_voters=2.
 % #const num_profiles=1.
@@ -112,8 +122,8 @@ pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)) :-
 % target_profile(1,2,2).
 % target_profile(1,3,3).
 % target_profile(2,1,1).
-% target_profile(2,2,3).
 % target_profile(2,3,2).
+% target_profile(2,2,3).
 % target_outcome(1).
 
 % use_axiom(condorcet).
@@ -125,8 +135,8 @@ pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)) :-
 % target_profile(1,2,2).
 % target_profile(1,3,3).
 % target_profile(2,1,1).
-% target_profile(2,2,3).
 % target_profile(2,3,2).
+% target_profile(2,2,3).
 % target_outcome(1).
 
 % use_axiom(faithfulness).
@@ -139,8 +149,21 @@ pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)) :-
 % target_profile(1,2,2).
 % target_profile(1,3,3).
 % target_profile(2,1,1).
-% target_profile(2,2,3).
 % target_profile(2,3,2).
+% target_profile(2,2,3).
+% target_outcome(1).
+
+% use_axiom(unanimity).
+% #const num_candidates=3.
+% #const num_voters=2.
+% #const num_profiles=1.
+% #const num_axiom_instances=1.
+% target_profile(1,1,1).
+% target_profile(1,2,2).
+% target_profile(1,3,3).
+% target_profile(2,1,1).
+% target_profile(2,3,2).
+% target_profile(2,2,3).
 % target_outcome(1).
 
 % use_axiom(faithfulness).
@@ -153,7 +176,7 @@ pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)) :-
 % target_profile(1,3,3).
 % target_outcome(1).
 
-% use_axiom(pareto_dominated).
+% use_axiom(pareto).
 % #const num_candidates=3.
 % #const num_voters=1.
 % #const num_profiles=1.
@@ -171,9 +194,9 @@ pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)) :-
 % target_profile(1,1,1).
 % target_profile(1,2,2).
 % target_profile(1,3,3).
-% target_profile(2,1,3).
-% target_profile(2,2,2).
 % target_profile(2,3,1).
+% target_profile(2,2,2).
+% target_profile(2,1,3).
 % target_outcome(1).
 % target_outcome(2).
 % target_outcome(3).
@@ -205,13 +228,13 @@ pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)) :-
 % target_profile(2,1,1).
 % target_profile(2,2,2).
 % target_profile(2,3,3).
-% target_profile(3,1,3).
-% target_profile(3,2,2).
 % target_profile(3,3,1).
+% target_profile(3,2,2).
+% target_profile(3,1,3).
 % target_outcome(1).
 
-% use_axiom(pareto_dominated).
-% use_axiom(neutrality).
+% use_axiom(pareto).
+% use_axiom(neutrality2).
 % #const num_candidates=3.
 % #const num_voters=2.
 % #const num_profiles=1.
@@ -219,33 +242,33 @@ pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)) :-
 % target_profile(1,1,1).
 % target_profile(1,2,2).
 % target_profile(1,3,3).
-% target_profile(2,1,2).
 % target_profile(2,2,1).
+% target_profile(2,1,2).
 % target_profile(2,3,3).
 % target_outcome(1).
 % target_outcome(2).
 
-% use_axiom(faithfulness).
-% use_axiom(cancellation).
-% use_axiom(reinforcement).
-% use_axiom(pareto_dominated).
-% #const num_candidates=3.
-% #const num_voters=3.
-% #const num_profiles=5.
-% #const num_axiom_instances=3.
-% target_profile(1,1,1).
-% target_profile(1,2,2).
-% target_profile(1,3,3).
-% target_profile(2,1,1).
-% target_profile(2,2,2).
-% target_profile(2,3,3).
-% target_profile(3,1,3).
-% target_profile(3,2,2).
-% target_profile(3,3,1).
-% target_outcome(1).
+use_axiom(faithfulness).
+use_axiom(cancellation).
+use_axiom(reinforcement).
+use_axiom(pareto).
+#const num_candidates=3.
+#const num_voters=3.
+#const num_profiles=5.
+#const num_axiom_instances=3.
+target_profile(1,1,1).
+target_profile(1,2,2).
+target_profile(1,3,3).
+target_profile(2,1,1).
+target_profile(2,2,2).
+target_profile(2,3,3).
+target_profile(3,3,1).
+target_profile(3,2,2).
+target_profile(3,1,3).
+target_outcome(1).
 
-% use_axiom(pareto_dominated).
-% use_axiom(neutrality).
+% use_axiom(pareto).
+% use_axiom(neutrality2).
 % use_axiom(reinforcement).
 % #const num_candidates=3.
 % #const num_voters=3.
@@ -255,31 +278,45 @@ pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)) :-
 % target_profile(1,2,2).
 % target_profile(1,3,3).
 % target_profile(2,1,1).
-% target_profile(2,2,3).
 % target_profile(2,3,2).
-% target_profile(3,1,2).
+% target_profile(2,2,3).
 % target_profile(3,2,1).
+% target_profile(3,1,2).
 % target_profile(3,3,3).
 % target_outcome(1).
 
-use_axiom(faithfulness).
-use_axiom(pareto_dominated).
-use_axiom(neutrality).
-use_axiom(reinforcement).
-#const num_candidates=3.
-#const num_voters=3.
-#const num_profiles=3.
-#const num_axiom_instances=4.
-target_profile(1,1,1).
-target_profile(1,2,2).
-target_profile(1,3,3).
-target_profile(2,1,1).
-target_profile(2,2,3).
-target_profile(2,3,2).
-target_profile(3,1,2).
-target_profile(3,2,1).
-target_profile(3,3,3).
-target_outcome(1).
+% use_axiom(faithfulness).
+% use_axiom(pareto).
+% use_axiom(neutrality2).
+% use_axiom(reinforcement).
+% #const num_candidates=3.
+% #const num_voters=3.
+% #const num_profiles=3.
+% #const num_axiom_instances=4.
+% target_profile(1,1,1).
+% target_profile(1,2,2).
+% target_profile(1,3,3).
+% target_profile(2,1,1).
+% target_profile(2,3,2).
+% target_profile(2,2,3).
+% target_profile(3,2,1).
+% target_profile(3,1,2).
+% target_profile(3,3,3).
+% target_outcome(1).
+
+% use_axiom(cancellation).
+% use_axiom(pos_responsiveness).
+% #const num_candidates=3.
+% #const num_voters=2.
+% #const num_profiles=2.
+% #const num_axiom_instances=2.
+% target_profile(1,1,1).
+% target_profile(1,2,2).
+% target_profile(1,3,3).
+% target_profile(2,2,1).
+% target_profile(2,3,2).
+% target_profile(2,1,3).
+% target_outcome(2).
 
 %* ******************
 *** GUESS PROGRAM ***
@@ -318,56 +355,9 @@ lex_dom(Prof,V1,V2) :- profile_num(Prof), voter(V1), voter(V2), V1 < V2,
 target_active_voter(V) :- target_profile(V,_,_).
 :- active_voter(1,V), not target_active_voter(V).
 
-%%% Applicability of PARETO
-dominates_in_voter(Prof,V,C1,C2) :-
-    profile_num(Prof), active_voter(Prof,V),
-    candidate(C1), candidate(C2), C1 != C2,
-    profile(Prof,V,C1,P1), profile(Prof,V,C2,P2), P1 < P2.
-dominates_in_profile(Prof,C1,C2) :-
-    profile_num(Prof),
-    candidate(C1), candidate(C2), C1 != C2,
-    dominates_in_voter(Prof,V,C1,C2) : active_voter(Prof,V).
-axiom_applicable(single(Prof),pareto_dominated(C2)) :-
-    pos_axiom_instance(single(Prof),pareto_dominated(C2)),
-    active_profile(Prof),
-    dominates_in_profile(Prof,C1,C2), candidate(C1), C1 != C2.
-
-%%% Applicability of FAITHFULNESS
-axiom_applicable(single(Prof),faithfulness) :-
-    pos_axiom_instance(single(Prof),faithfulness),
-    active_profile(Prof),
-    active_voter(Prof,1), not active_voter(Prof,2).
-
-%%% Applicability of CANCELLATION
+%%% Shared for applicability of various axioms
 num_active_voters(Prof,Num) :-
     profile_num(Prof), Num = #count { V : active_voter(Prof,V) }.
-num_active_voters_even(Prof) :-
-    num_active_voters(Prof,Num), Num \ 2 == 0.
-cancellation_flipped_pair(Prof,V1,V2) :-
-    num_active_voters_even(Prof), num_active_voters(Prof,Num),
-    active_voter(Prof,V1), active_voter(Prof,V2), V1 < V2,
-    V1 <= Num/2, V2 == Num-V1+1.
-cancellation_identical_pair(Prof,V1,V2) :-
-    num_active_voters_even(Prof), num_active_voters(Prof,Num),
-    active_voter(Prof,V1), active_voter(Prof,V2), V1 < V2,
-    V1 <= Num/2, V2 <= Num/2.
-cancellation_identical_pair(Prof,V1,V2) :-
-    num_active_voters_even(Prof), num_active_voters(Prof,Num),
-    active_voter(Prof,V1), active_voter(Prof,V2), V1 < V2,
-    V1 > Num/2, V2 > Num/2.
-votes_identical(Prof,V1,V2) :-
-    votes_identical(Prof,V1,Prof,V2), V1 < V2.
-votes_flipped(Prof,V1,V2) :-
-    profile_num(Prof), active_voter(Prof,V1), active_voter(Prof,V2), V1 < V2,
-    profile(Prof,V2,C,num_candidates-P+1) : profile(Prof,V1,C,P).
-axiom_applicable(single(Prof),cancellation) :-
-    pos_axiom_instance(single(Prof),cancellation),
-    active_profile(Prof),
-    num_active_voters_even(Prof),
-    votes_identical(Prof,V1,V2) : cancellation_identical_pair(Prof,V1,V2);
-    votes_flipped(Prof,V1,V2) : cancellation_flipped_pair(Prof,V1,V2).
-
-%%% Applicability of REINFORCEMENT
 votes_identical(Prof1,V1,Prof2,V2) :-
     profile_num(Prof1), profile_num(Prof2),
     active_voter(Prof1,V1), active_voter(Prof2,V2),
@@ -375,7 +365,74 @@ votes_identical(Prof1,V1,Prof2,V2) :-
 num_votes_identical(Prof1,V1,Prof2,N) :-
     profile_num(Prof1), profile_num(Prof2), voter(V1),
     N = #count { V2 : voter(V2), votes_identical(Prof1,V1,Prof2,V2) }.
+
+%%% Applicability of PARETO
+dominates_in_voter(Prof,V,C1,C2) :-
+    use_axiom(pareto),
+    profile_num(Prof), active_voter(Prof,V),
+    candidate(C1), candidate(C2), C1 != C2,
+    profile(Prof,V,C1,P1), profile(Prof,V,C2,P2), P1 < P2.
+dominates_in_profile(Prof,C1,C2) :-
+    use_axiom(pareto),
+    profile_num(Prof),
+    candidate(C1), candidate(C2), C1 != C2,
+    dominates_in_voter(Prof,V,C1,C2) : active_voter(Prof,V).
+axiom_applicable(single(Prof),pareto(C2)) :-
+    use_axiom(pareto),
+    pos_axiom_instance(single(Prof),pareto(C2)),
+    active_profile(Prof),
+    dominates_in_profile(Prof,C1,C2), candidate(C1), C1 != C2.
+
+%%% Applicability of FAITHFULNESS
+axiom_applicable(single(Prof),faithfulness) :-
+    use_axiom(faithfulness),
+    pos_axiom_instance(single(Prof),faithfulness),
+    active_profile(Prof),
+    active_voter(Prof,1), not active_voter(Prof,2).
+
+%%% Applicability of UNANIMITY
+axiom_applicable(single(Prof),unanimity) :-
+    use_axiom(unanimity),
+    pos_axiom_instance(single(Prof),unanimity),
+    active_profile(Prof), candidate(C),
+    profile(Prof,V,C,1) : active_voter(Prof,V).
+
+%%% Applicability of CANCELLATION
+num_active_voters_even(Prof) :-
+    use_axiom(cancellation),
+    num_active_voters(Prof,Num), Num \ 2 == 0.
+cancellation_flipped_pair(Prof,V1,V2) :-
+    use_axiom(cancellation),
+    num_active_voters_even(Prof), num_active_voters(Prof,Num),
+    active_voter(Prof,V1), active_voter(Prof,V2), V1 < V2,
+    V1 <= Num/2, V2 == Num-V1+1.
+cancellation_identical_pair(Prof,V1,V2) :-
+    use_axiom(cancellation),
+    num_active_voters_even(Prof), num_active_voters(Prof,Num),
+    active_voter(Prof,V1), active_voter(Prof,V2), V1 < V2,
+    V1 <= Num/2, V2 <= Num/2.
+cancellation_identical_pair(Prof,V1,V2) :-
+    use_axiom(cancellation),
+    num_active_voters_even(Prof), num_active_voters(Prof,Num),
+    active_voter(Prof,V1), active_voter(Prof,V2), V1 < V2,
+    V1 > Num/2, V2 > Num/2.
+votes_identical(Prof,V1,V2) :-
+    votes_identical(Prof,V1,Prof,V2), V1 < V2.
+votes_flipped(Prof,V1,V2) :-
+    use_axiom(cancellation),
+    profile_num(Prof), active_voter(Prof,V1), active_voter(Prof,V2), V1 < V2,
+    profile(Prof,V2,C,num_candidates-P+1) : profile(Prof,V1,C,P).
+axiom_applicable(single(Prof),cancellation) :-
+    use_axiom(cancellation),
+    pos_axiom_instance(single(Prof),cancellation),
+    active_profile(Prof),
+    num_active_voters_even(Prof),
+    votes_identical(Prof,V1,V2) : cancellation_identical_pair(Prof,V1,V2);
+    votes_flipped(Prof,V1,V2) : cancellation_flipped_pair(Prof,V1,V2).
+
+%%% Applicability of REINFORCEMENT
 reinforcement_count_check(triple(Prof1,Prof2,Prof3),V) :-
+    use_axiom(reinforcement),
     pos_axiom_instance(triple(Prof1,Prof2,Prof3),reinforcement),
     active_voter(Prof3,V),
     num_votes_identical(Prof3,V,Prof1,N1),
@@ -383,6 +440,7 @@ reinforcement_count_check(triple(Prof1,Prof2,Prof3),V) :-
     num_votes_identical(Prof3,V,Prof3,N3),
     N3 = N1 + N2.
 axiom_applicable(triple(Prof1,Prof2,Prof3),reinforcement) :-
+    use_axiom(reinforcement),
     pos_axiom_instance(triple(Prof1,Prof2,Prof3),reinforcement),
     active_profile(Prof1), active_profile(Prof2), active_profile(Prof3),
     num_active_voters(Prof1,N1), num_active_voters(Prof2,N2),
@@ -392,45 +450,96 @@ axiom_applicable(triple(Prof1,Prof2,Prof3),reinforcement) :-
 
 %%% Applicability of CONDORCET
 beats(Prof,V,C1,C2) :-
+    use_axiom(condorcet),
     profile_num(Prof), active_voter(Prof,V),
     candidate(C1), candidate(C2), C1 != C2,
     profile(Prof,V,C1,P1), profile(Prof,V,C2,P2), P1 < P2.
 majority_beats(Prof,C1,C2) :-
+    use_axiom(condorcet),
     profile_num(Prof), candidate(C1), candidate(C2), C1 != C2,
     N1 = #count { V : beats(Prof,V,C1,C2) },
     N2 = #count { V : beats(Prof,V,C2,C1) },
     N1 > N2.
 axiom_applicable(single(Prof),condorcet(C1)) :-
+    use_axiom(condorcet),
     pos_axiom_instance(single(Prof),condorcet(C1)),
     active_profile(Prof),
     majority_beats(Prof,C1,C2) : candidate(C2), C1 != C2.
 
 %%% Applicability of NEUTRALITY/2
 votes_identical_under_swap(Prof1,V1,Prof2,V2,C1,C2) :-
-    use_axiom(neutrality),
+    use_axiom(neutrality2),
     profile_num(Prof1), profile_num(Prof2),
     active_voter(Prof1,V1), active_voter(Prof2,V2),
     candidate(C1), candidate(C2), C1 < C2,
     profile(Prof1,V1,CS2,P) : profile(Prof2,V2,CS1,P), swap(C1,C2,CS1,CS2).
 num_votes_identical_under_swap(Prof1,V1,Prof2,C1,C2,N) :-
-    use_axiom(neutrality),
+    use_axiom(neutrality2),
     profile_num(Prof1), profile_num(Prof2), voter(V1),
     candidate(C1), candidate(C2), C1 < C2,
     N = #count { V2 : voter(V2),
                       votes_identical_under_swap(Prof1,V1,Prof2,V2,C1,C2) }.
 neutrality2_count_check(double(Prof1,Prof2),C1,C2,V) :-
-    use_axiom(neutrality),
+    use_axiom(neutrality2),
     pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)),
     active_voter(Prof1,V),
     num_votes_identical(Prof1,V,Prof1,N),
     num_votes_identical_under_swap(Prof1,V,Prof2,C1,C2,N).
 axiom_applicable(double(Prof1,Prof2),neutrality2(C1,C2)) :-
-    use_axiom(neutrality),
+    use_axiom(neutrality2),
     pos_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)),
     active_profile(Prof1), active_profile(Prof2),
     num_active_voters(Prof1,N), num_active_voters(Prof2,N),
     neutrality2_count_check(double(Prof1,Prof2),C1,C2,V) :
         active_voter(Prof1,V).
+
+%%% Applicability of POSITIVE RESPONSIVENESS
+votes_identical_after_upwards_move(Prof1,V1,Prof2,V2,C,P) :-
+    use_axiom(pos_responsiveness),
+    profile_num(Prof1), profile_num(Prof2),
+    active_voter(Prof1,V1), active_voter(Prof2,V2),
+    pos_response_pair(C,P),
+    profile(Prof1,V1,C,P1), profile(Prof2,V2,C,P1-P),
+    profile(Prof2,V2,C2,P2) :
+        profile(Prof1,V1,C2,P2), P2 > P1;
+    profile(Prof2,V2,C2,P2) :
+        profile(Prof1,V1,C2,P2), P2 < P1-P;
+    profile(Prof2,V2,C2,P2+1) :
+        profile(Prof1,V1,C2,P2), P2 < P1, P2 >= P1-P.
+pos_response_check(Prof1,V1,Prof2,V2,C,P) :-
+    use_axiom(pos_responsiveness),
+    profile_num(Prof1), profile_num(Prof2),
+    active_voter(Prof1,V1), active_voter(Prof2,V2),
+    pos_response_pair(C,P),
+    votes_identical_after_upwards_move(Prof1,V1,Prof2,V2,C,P),
+    num_votes_identical(Prof2,V2,Prof2,N2),
+    num_votes_identical(Prof2,V2,Prof1,N1),
+    N2 = N1 + 1.
+pos_response_check(Prof1,V1,Prof2,V2,C,P) :-
+    use_axiom(pos_responsiveness),
+    profile_num(Prof1), profile_num(Prof2),
+    active_voter(Prof1,V1), active_voter(Prof2,V2),
+    pos_response_pair(C,P),
+    votes_identical(Prof1,V1,Prof2,V2),
+    num_votes_identical(Prof2,V2,Prof2,N2),
+    num_votes_identical(Prof2,V2,Prof1,N1),
+    N2 = N1 - 1.
+pos_response_check(Prof1,V1,Prof2,V2,C,P) :-
+    use_axiom(pos_responsiveness),
+    profile_num(Prof1), profile_num(Prof2),
+    active_voter(Prof1,V1), active_voter(Prof2,V2),
+    pos_response_pair(C,P),
+    not votes_identical_after_upwards_move(Prof1,V1,Prof2,V2,C,P),
+    not votes_identical(Prof1,V1,Prof2,V2),
+    num_votes_identical(Prof2,V2,Prof2,N2),
+    num_votes_identical(Prof2,V2,Prof1,N1),
+    N2 = N1.
+axiom_applicable(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
+    use_axiom(pos_responsiveness),
+    pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)),
+    active_profile(Prof1), active_profile(Prof2),
+    num_active_voters(Prof1,N), num_active_voters(Prof2,N),
+    pos_response_check(Prof1,V,Prof2,V2,C,P) : active_voter(Prof2,V2).
 
 %%% Guess the right amount of axiom instances to use
 num_axiom_instances { use_axiom_instance(Profiles,Axiom) :
@@ -538,12 +647,18 @@ target_outcome_differs :-
 
 %%% Make sure that the outcomes satisfy all used axiom instances
 %%% PARETO
-:- use_axiom_instance(single(Prof),pareto_dominated(C)),
+:- use_axiom_instance(single(Prof),pareto(C)),
     outcome(Prof,C).
 %%% FAITHFULNESS
 :- use_axiom_instance(single(Prof),faithfulness),
     profile(Prof,1,C,1), not outcome(Prof,C).
 :- use_axiom_instance(single(Prof),faithfulness),
+    profile(Prof,1,C1,1),
+    outcome(Prof,C2), candidate(C2), C1 != C2.
+%%% UNANIMITY
+:- use_axiom_instance(single(Prof),unanimity),
+    profile(Prof,1,C,1), not outcome(Prof,C).
+:- use_axiom_instance(single(Prof),unanimity),
     profile(Prof,1,C1,1),
     outcome(Prof,C2), candidate(C2), C1 != C2.
 %%% CANCELLATION
@@ -574,6 +689,13 @@ outcomes_intersect(Prof1,Prof2) :-
 :- use_axiom_instance(double(Prof1,Prof2),neutrality2(C1,C2)),
     swap(C1,C2,CS1,CS2), candidate(CS1),
     outcome(Prof2,CS2), not outcome(Prof1,CS1).
+%%% POSITIVE RESPONSIVENESS
+:- use_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)),
+    candidate(C),
+    outcome(Prof1,C), not outcome(Prof2,C).
+:- use_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C1,P)),
+    candidate(C1), candidate(C2), C1 != C2,
+    outcome(Prof1,C1), outcome(Prof2,C2).
 
 %%% Declare atoms to use for refinement
 relevant(profile(Prof,V,Cand,Pos)) :-

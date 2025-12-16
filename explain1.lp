@@ -3,7 +3,6 @@
 
 %* *** TODO's ***
 - finish comments
-- proper refinement
 - 'Borda' constraints on choices, also for plurality, etc.
 - neutrality/3
 *************** *%
@@ -133,6 +132,7 @@ pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 % target_profile(2,3,2).
 % target_profile(2,2,3).
 % target_outcome(1).
+% requires_polarity_axiom.
 
 % use_axiom(condorcet).
 % #const num_candidates=3.
@@ -146,6 +146,7 @@ pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 % target_profile(2,3,2).
 % target_profile(2,2,3).
 % target_outcome(1).
+% requires_polarity_axiom.
 
 % use_axiom(faithfulness).
 % use_axiom(reinforcement).
@@ -160,6 +161,7 @@ pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 % target_profile(2,3,2).
 % target_profile(2,2,3).
 % target_outcome(1).
+% requires_polarity_axiom.
 
 % use_axiom(unanimity).
 % #const num_candidates=3.
@@ -173,6 +175,7 @@ pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 % target_profile(2,3,2).
 % target_profile(2,2,3).
 % target_outcome(1).
+% requires_polarity_axiom.
 
 % use_axiom(faithfulness).
 % #const num_candidates=3.
@@ -183,6 +186,7 @@ pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 % target_profile(1,2,2).
 % target_profile(1,3,3).
 % target_outcome(1).
+% requires_polarity_axiom.
 
 % use_axiom(pareto).
 % #const num_candidates=3.
@@ -193,6 +197,7 @@ pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 % target_profile(1,2,2).
 % target_profile(1,3,3).
 % target_outcome(1).
+% requires_polarity_axiom.
 
 % use_axiom(cancellation).
 % #const num_candidates=3.
@@ -222,6 +227,7 @@ pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 % target_profile(2,2,2).
 % target_profile(2,3,3).
 % target_outcome(1).
+% requires_polarity_axiom.
 
 % use_axiom(faithfulness).
 % use_axiom(cancellation).
@@ -240,6 +246,7 @@ pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 % target_profile(3,2,2).
 % target_profile(3,1,3).
 % target_outcome(1).
+% requires_polarity_axiom.
 
 % use_axiom(pareto).
 % use_axiom(neutrality2).
@@ -255,25 +262,49 @@ pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 % target_profile(2,3,3).
 % target_outcome(1).
 % target_outcome(2).
+% requires_polarity_axiom.
 
-use_axiom(faithfulness).
-use_axiom(cancellation).
-use_axiom(reinforcement).
-use_axiom(pareto).
-#const num_candidates=3.
-#const num_voters=3.
-#const num_profiles=5.
-#const num_axiom_instances=3.
-target_profile(1,1,1).
-target_profile(1,2,2).
-target_profile(1,3,3).
-target_profile(2,1,1).
-target_profile(2,2,2).
-target_profile(2,3,3).
-target_profile(3,3,1).
-target_profile(3,2,2).
-target_profile(3,1,3).
-target_outcome(1).
+% use_axiom(faithfulness).
+% use_axiom(cancellation).
+% use_axiom(reinforcement).
+% use_axiom(pareto).
+% #const num_candidates=3.
+% #const num_voters=3.
+% #const num_profiles=6.
+% #const num_axiom_instances=3.
+% target_profile(1,1,1).
+% target_profile(1,2,2).
+% target_profile(1,3,3).
+% target_profile(2,1,1).
+% target_profile(2,2,2).
+% target_profile(2,3,3).
+% target_profile(3,3,1).
+% target_profile(3,2,2).
+% target_profile(3,1,3).
+% target_outcome(1).
+% requires_polarity_axiom.
+
+% % UNSAT
+% use_axiom(faithfulness).
+% use_axiom(cancellation).
+% use_axiom(reinforcement).
+% use_axiom(pareto).
+% use_axiom(condorcet).
+% #const num_candidates=3.
+% #const num_voters=3.
+% #const num_profiles=5.
+% #const num_axiom_instances=3.
+% target_profile(1,1,1).
+% target_profile(1,2,2).
+% target_profile(1,3,3).
+% target_profile(2,1,1).
+% target_profile(2,2,2).
+% target_profile(2,3,3).
+% target_profile(3,3,1).
+% target_profile(3,2,2).
+% target_profile(3,1,3).
+% target_outcome(2).
+% requires_polarity_axiom.
 
 % use_axiom(pareto).
 % use_axiom(neutrality2).
@@ -292,6 +323,7 @@ target_outcome(1).
 % target_profile(3,1,2).
 % target_profile(3,3,3).
 % target_outcome(1).
+% requires_polarity_axiom.
 
 % use_axiom(faithfulness).
 % use_axiom(pareto).
@@ -311,6 +343,7 @@ target_outcome(1).
 % target_profile(3,1,2).
 % target_profile(3,3,3).
 % target_outcome(1).
+% requires_polarity_axiom.
 
 % use_axiom(cancellation).
 % use_axiom(pos_responsiveness).
@@ -325,6 +358,52 @@ target_outcome(1).
 % target_profile(2,3,2).
 % target_profile(2,1,3).
 % target_outcome(2).
+% requires_polarity_axiom.
+
+use_axiom(cancellation).
+use_axiom(reinforcement).
+use_axiom(pos_responsiveness).
+#const num_candidates=3.
+#const num_voters=4.
+#const num_profiles=4.
+#const num_axiom_instances=4.
+target_profile(1,1,1).
+target_profile(1,2,2).
+target_profile(1,3,3).
+target_profile(2,1,1).
+target_profile(2,3,2).
+target_profile(2,2,3).
+target_profile(3,2,1).
+target_profile(3,3,2).
+target_profile(3,1,3).
+target_profile(4,3,1).
+target_profile(4,1,2).
+target_profile(4,2,3).
+target_outcome(1).
+requires_polarity_axiom.
+
+% % FOR EFFICIENCY, NEEDS 2-STEP PROCEDURE
+% % (FIRST FINDING PROFILES)
+% use_axiom(pareto).
+% use_axiom(neutrality2).
+% use_axiom(cancellation).
+% use_axiom(reinforcement).
+% #const num_candidates=3.
+% #const num_voters=5.
+% #const num_profiles=6.
+% #const num_axiom_instances=8.
+% target_profile(1,1,1).
+% target_profile(1,2,2).
+% target_profile(1,3,3).
+% target_profile(2,3,1).
+% target_profile(2,1,2).
+% target_profile(2,2,3).
+% target_profile(3,3,1).
+% target_profile(3,1,2).
+% target_profile(3,2,3).
+% target_outcome(1).
+% target_outcome(3).
+% requires_polarity_axiom.
 
 %* ******************
 *** GUESS PROGRAM ***
@@ -552,6 +631,25 @@ axiom_applicable(double(Prof1,Prof2),pos_responsiveness(V,C,P)) :-
 %%% Guess the right amount of axiom instances to use
 num_axiom_instances { use_axiom_instance(Profiles,Axiom) :
     axiom_applicable(Profiles,Axiom) } num_axiom_instances.
+% use_axiom_instance(Profiles,Axiom) :-
+%     axiom_applicable(Profiles,Axiom).
+
+%%% Keep track of which axioms have instances used
+is_used(pareto) :- use_axiom_instance(Pr,pareto(C)).
+is_used(unanimity) :- use_axiom_instance(Pr,unanimity).
+is_used(faithfulness) :- use_axiom_instance(Pr,faithfulness).
+is_used(cancellation) :- use_axiom_instance(Pr,cancellation).
+is_used(reinforcement) :- use_axiom_instance(Pr,reinforcement).
+is_used(condorcet) :- use_axiom_instance(Pr,condorcet(C)).
+is_used(neutrality2) :- use_axiom_instance(Pr,neutrality2(C1,C2)).
+is_used(pos_responsiveness) :- use_axiom_instance(Pr,pos_responsiveness(V,C,P)).
+
+polarity_axiom_used :- is_used(pareto).
+polarity_axiom_used :- is_used(unanimity).
+polarity_axiom_used :- is_used(faithfulness).
+polarity_axiom_used :- is_used(condorcet).
+polarity_axiom_used :- is_used(pos_responsiveness).
+:- requires_polarity_axiom, not polarity_axiom_used.
 
 %%% Redundant constraint: only use subsequent profile numbers
 :- profile_num(Prof), profile_num(Prof+1),
@@ -679,6 +777,8 @@ target_outcome_differs :-
 
 %%% Heuristic: satisfy as many axioms as possible
 #heuristic falsified(pos_axiom_instance(Profiles,Axiom)) :
+    use_axiom_instance(Profiles,Axiom). [20,false]
+#heuristic falsified(pos_axiom_instance(Profiles,Axiom)) :
     pos_axiom_instance(Profiles,Axiom). [10,false]
 
 %%% Make sure that the outcomes satisfy all used axiom instances
@@ -750,27 +850,20 @@ falsified(pos_axiom_instance(double(Prof1,Prof2),pos_responsiveness(V,C1,P))) :-
     candidate(C1), candidate(C2), C1 != C2,
     outcome(Prof1,C1), outcome(Prof2,C2).
 
-%%% Declare atoms to use for refinement
-% equiv_instance(Pr,Ax,Ax) :-
-%     pos_axiom_instance(Pr,Ax).
-% equiv_instance(Pr,pos_responsiveness(V1,C,P1),pos_responsiveness(V2,C,P2)) :-
-%     pos_axiom_instance(Pr,pos_responsiveness(V1,C,P1)),
-%     pos_axiom_instance(Pr,pos_responsiveness(V2,C,P2)).
 
-%%% REFINEMENT STRATEGY 1
-relevant(profile(Prof,V,Cand,Pos)) :-
-    profile_num(Prof), voter(V), candidate(Cand), position(Pos).
-relevant(use_axiom_instance(Profiles,Axiom)) :-
-    falsified(pos_axiom_instance(Profiles,Axiom)),
-    % axiom_applicable(Profiles,Axiom),
-    pos_axiom_instance(Profiles,Axiom).
-
-% %%% REFINEMENT STRATEGY 2
+% %%% REFINEMENT STRATEGY 1
 % relevant(profile(Prof,V,Cand,Pos)) :-
 %     profile_num(Prof), voter(V), candidate(Cand), position(Pos).
 % relevant(use_axiom_instance(Profiles,Axiom)) :-
-%     not falsified(pos_axiom_instance(Profiles,Axiom)),
+%     falsified(pos_axiom_instance(Profiles,Axiom)),
 %     pos_axiom_instance(Profiles,Axiom).
+
+%%% REFINEMENT STRATEGY 2
+relevant(profile(Prof,V,Cand,Pos)) :-
+    profile_num(Prof), voter(V), candidate(Cand), position(Pos).
+relevant(use_axiom_instance(Profiles,Axiom)) :-
+    not falsified(pos_axiom_instance(Profiles,Axiom)),
+    pos_axiom_instance(Profiles,Axiom).
 
 % %%% REFINEMENT STRATEGY 3
 % relevant(profile(Prof,V,Cand,Pos)) :-
@@ -784,3 +877,9 @@ relevant(use_axiom_instance(Profiles,Axiom)) :-
 %     profile_num(Prof), voter(V), candidate(Cand), position(Pos).
 % relevant(use_axiom_instance(Profiles,Axiom)) :-
 %     use_axiom_instance(Profiles,Axiom).
+
+% %%% REFINEMENT STRATEGY 5
+% relevant(profile(Prof,V,Cand,Pos)) :-
+%     profile_num(Prof), voter(V), candidate(Cand), position(Pos).
+% relevant(use_axiom_instance(Profiles,Axiom)) :-
+%     pos_axiom_instance(Profiles,Axiom).
